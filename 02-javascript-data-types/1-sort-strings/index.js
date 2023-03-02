@@ -6,7 +6,13 @@
  */
 export function sortStrings(arr, param = "asc") {
   function sortByLocaleAndCase(a, b) {
-    const result = a.localeCompare(b, "ru", { sensitivity: "base" });
+    const locale = "ru";
+    const options = { sensitivity: "base" };
+    const result =
+      param === "desc"
+        ? b.localeCompare(a, locale, options)
+        : a.localeCompare(b, locale, options);
+
     if (result !== 0) {
       return result;
     } else {
@@ -19,9 +25,5 @@ export function sortStrings(arr, param = "asc") {
       return 0;
     }
   }
-  const newArr = [...arr].sort(sortByLocaleAndCase);
-  if (param === "desc") {
-    newArr.reverse();
-  }
-  return newArr;
+  return [...arr].sort(sortByLocaleAndCase);
 }
