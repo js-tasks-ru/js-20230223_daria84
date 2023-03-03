@@ -6,7 +6,7 @@
  */
 export function sortStrings(arr, param = "asc") {
   function sortByLocaleAndCase(a, b) {
-    const locale = "ru";
+    const locale = ["ru", "en"];
     const options = { sensitivity: "base" };
     const result =
       param === "desc"
