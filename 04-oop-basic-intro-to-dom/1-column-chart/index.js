@@ -87,7 +87,8 @@ export default class ColumnChart {
 
   update(newData) {
     this.data = newData;
-    this.getChart();
+    const chartBody = this.element.querySelector('[data-element="body"]');
+    chartBody.innerHTML = this.getBars();
   }
 
   render() {
