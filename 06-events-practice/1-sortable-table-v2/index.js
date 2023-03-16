@@ -4,7 +4,7 @@ export default class SortableTable {
   headerConfigIds = [];
 
   onPointerDown = (field) => {
-    let { id, order } = this.sorted;
+    const { id, order } = this.sorted;
     if (field === id) {
       this.sorted.order = order === "desc" ? "asc" : "desc";
     } else {
