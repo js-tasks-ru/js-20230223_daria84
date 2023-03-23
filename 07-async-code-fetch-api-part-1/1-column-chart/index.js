@@ -11,16 +11,15 @@ export default class ColumnChart {
   constructor({
     label = "",
     link = "",
-    value = 0,
     url = "",
     range = {},
     formatHeading = (data) => data,
   } = {}) {
     this.label = label;
     this.link = link;
-    this.value = formatHeading(value);
     this.url = url;
     this.range = range;
+    this.formatHeading = formatHeading;
 
     this.render();
     this.update(this.range.from, this.range.to);
@@ -37,7 +36,7 @@ export default class ColumnChart {
         </div>
         <div class="column-chart__container">
            <div data-element="header" class="column-chart__header">
-             ${this.value}
+             ${this.getTotal()}
            </div>
           <div data-element="body" class="column-chart__chart">
             ${this.getColumnBody()}
@@ -55,18 +54,21 @@ export default class ColumnChart {
     this.element = wrapper.firstElementChild;
 
     this.subElements = this.getSubElements();
-
-    this.element.classList.add("column-chart_loading");
   }
 
   async update(from, to) {
     this.range.from = from;
     this.range.to = to;
 
+    this.element.classList.add("column-chart_loading");
+
     await this.loadData();
 
-    if (Object.keys(this.data).length) {
+    const dataArr = Object.values(this.data);
+
+    if (dataArr.length) {
       this.subElements.body.innerHTML = this.getColumnBody();
+      this.subElements.header.innerHTML = this.getTotal();
       this.element.classList.remove("column-chart_loading");
     }
 
@@ -87,6 +89,12 @@ export default class ColumnChart {
     return `from=${this.range.from.toISOString()}&to=${this.range.to.toISOString()}`;
   }
 
+  getTotal() {
+    return this.formatHeading(
+      Object.values(this.data).reduce((total, item) => (total += item), 0)
+    );
+  }
+
   getSubElements() {
     const result = {};
     const elements = this.element.querySelectorAll("[data-element]");
@@ -102,7 +110,6 @@ export default class ColumnChart {
 
   getColumnBody() {
     const dataArr = Object.values(this.data);
-
     const maxValue = Math.max(...dataArr);
     const scale = this.chartHeight / maxValue;
 
