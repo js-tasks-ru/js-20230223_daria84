@@ -76,17 +76,19 @@ export default class ColumnChart {
   }
 
   async loadData() {
-    const queryParams = this.getQueryParams();
-
     try {
-      this.data = await fetchJson(`${BACKEND_URL}/${this.url}?${queryParams}`);
+      this.data = await fetchJson(this.fetchUrl);
     } catch (error) {
       // TODO: show error to the user
     }
   }
 
-  getQueryParams() {
-    return `from=${this.range.from.toISOString()}&to=${this.range.to.toISOString()}`;
+  get fetchUrl() {
+    const { from, to } = this.range;
+    const url = new URL(this.url, BACKEND_URL);
+    url.searchParams.set("from", from.toISOString());
+    url.searchParams.set("to", to.toISOString());
+    return url;
   }
 
   getTotal() {
@@ -109,21 +111,26 @@ export default class ColumnChart {
   }
 
   getColumnBody() {
-    const dataArr = Object.values(this.data);
-    const maxValue = Math.max(...dataArr);
+    const maxValue = Math.max(...Object.values(this.data));
     const scale = this.chartHeight / maxValue;
 
-    return dataArr
-      .map((item) => {
-        const percent = ((item / maxValue) * 100).toFixed(0);
+    return Object.entries(this.data)
+      .map(([key, value]) => {
+        const percent = ((value / maxValue) * 100).toFixed(0);
 
         return `
           <div
-            style="--value: ${Math.floor(item * scale)}"
-            data-tooltip="<strong>${percent}%</strong>">
+            style="--value: ${Math.floor(value * scale)}"
+            data-tooltip="<div><span>${this.getFormattedDate(
+              key
+            )}</span><strong>${percent}%</strong></div>">
           </div>`;
       })
       .join("");
+  }
+
+  getFormattedDate(date) {
+    return new Date(date).toLocaleString("en-US", { dateStyle: "medium" });
   }
 
   getLink() {
