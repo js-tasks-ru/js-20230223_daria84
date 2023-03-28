@@ -256,14 +256,17 @@ export default class ProductForm {
   }
 
   getImage(image) {
+    const { source, url } = image;
     return `
       <li class="products-edit__imagelist-item sortable-list__item" style="">
         <input type="hidden" value="https://i.imgur.com/MWorX2R.jpg">
         <input type="hidden" value="75462242_3746019958756848_838491213769211904_n.jpg">
         <span>
           <img src="icon-grab.svg" data-grab-handle="" alt="grab">
-          <img class="sortable-table__cell-img" alt="Image" src="${image.url}">
-          <span>${image.source}</span>
+          <img class="sortable-table__cell-img" alt="${escapeHtml(
+            source
+          )}" src="${escapeHtml(url)}">
+          <span>${escapeHtml(source)}</span>
         </span>
         <button type="button" data-delete="${image.source}">
           <img src="icon-trash.svg" data-delete-handle="" alt="delete">
