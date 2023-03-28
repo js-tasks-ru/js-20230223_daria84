@@ -7,7 +7,7 @@
     "lint": "eslint \"./**/*.js\"",
     "lint:fix": "eslint --fix \"./**/*.js\"",
     "test": "cross-env NODE_ICU_DATA=node_modules/full-icu jest",
-    "test:specific": "cross-env NODE_ICU_DATA=node_modules/full-icu jest -t 'intro/sum'"
+    "test:specific": "cross-env NODE_ICU_DATA=node_modules/full-icu jest -t $1"
   },
   "repository": {
     "type": "git",
